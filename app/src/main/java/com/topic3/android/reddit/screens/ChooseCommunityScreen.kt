@@ -16,6 +16,20 @@ import com.topic3.android.reddit.routing.RedditRouter
 import com.topic3.android.reddit.viewmodel.MainViewModel
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.Column
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.MaterialTheme.colors
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.fillMaxWidth
 
 private const val SEARCH_DELAY_MILLIS = 300L
 
@@ -23,7 +37,47 @@ private val defaultCommunities = listOf("raywenderlich", "androiddev", "puppies"
 
 @Composable
 fun ChooseCommunityScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
-    //TODO Add your code here
+    val scope = rememberCoroutineScope()
+    val communities: List<String> by viewModel.subreddits.observeAsState(emptyList())
+    var searchedText by remember { mutableStateOf("") }
+    var currentJob by remember { mutableStateOf<Job?>(null) }
+    val activeColor = MaterialTheme.colors.onSurface
+
+    LaunchedEffect(Unit) {
+        viewModel.searchCommunities(searchedText)
+    }
+
+    Column {
+        ChooseCommunityTopBar()
+        TextField(
+            value = searchedText,
+            onValueChange = {
+                searchedText = it
+                currentJob?.cancel()
+                currentJob = scope.async {
+                    delay(SEARCH_DELAY_MILLIS)
+                    viewModel.searchCommunities(searchedText)
+                }
+            },
+            leadingIcon = {
+                Icon(
+                    Icons.Default.Search,
+                    contentDescription = stringResource(id = R.string.search)
+                )
+            },
+            label = { Text(stringResource(R.string.search)) },
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = activeColor,
+                focusedLabelColor = activeColor,
+                cursorColor = activeColor,
+                backgroundColor = MaterialTheme.colors.surface
+            )
+        )
+        SearchedCommunities(communities, viewModel, modifier)
+    }
 }
 
 @Composable
