@@ -30,6 +30,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.fillMaxWidth
+import com.topic3.android.reddit.routing.BackButtonAction
 
 private const val SEARCH_DELAY_MILLIS = 300L
 
@@ -77,6 +78,9 @@ fun ChooseCommunityScreen(viewModel: MainViewModel, modifier: Modifier = Modifie
             )
         )
         SearchedCommunities(communities, viewModel, modifier)
+    }
+    BackButtonAction {
+        RedditRouter.goBack()
     }
 }
 
