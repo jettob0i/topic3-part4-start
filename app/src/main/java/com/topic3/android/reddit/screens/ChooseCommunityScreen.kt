@@ -14,6 +14,8 @@ import androidx.compose.ui.unit.sp
 import com.topic3.android.reddit.R
 import com.topic3.android.reddit.routing.RedditRouter
 import com.topic3.android.reddit.viewmodel.MainViewModel
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.foundation.layout.Column
 
 private const val SEARCH_DELAY_MILLIS = 300L
 
@@ -30,7 +32,15 @@ fun SearchedCommunities(
     viewModel: MainViewModel?,
     modifier: Modifier = Modifier
 ) {
-    //TODO Add your code here
+    communities.forEach { Community(
+        text = it,
+        modifier = modifier,
+        onCommunityClicked = {
+            viewModel?.selectedCommunity?.postValue(it)
+            RedditRouter.goBack()
+        }
+    )
+    }
 }
 
 @Composable
@@ -63,4 +73,16 @@ fun ChooseCommunityTopBar(modifier: Modifier = Modifier) {
             .height(48.dp)
             .background(Color.Blue)
     )
+}
+
+@Preview
+@Composable
+fun SearchedCommunitiesPreview() {
+    Column {
+        SearchedCommunities(
+            defaultCommunities,
+            null,
+            Modifier
+        )
+    }
 }
