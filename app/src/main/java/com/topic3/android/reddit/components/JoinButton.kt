@@ -24,6 +24,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
+import androidx.compose.animation.animateColor
 
 @Composable
 fun JoinButton(onClick: (Boolean) -> Unit ={} ) {
@@ -32,12 +35,20 @@ fun JoinButton(onClick: (Boolean) -> Unit ={} ) {
 
     val shape = RoundedCornerShape(corner = CornerSize(12.dp))
 
-    val buttonBackgroundColor: Color by animateColorAsState(
-        if  (buttonState == JoinButtonState.PRESSED)
-            Color.White
-        else
-            Color.Blue
-    )
+    val transition = updateTransition(
+        targetState = buttonState,
+        label = "JoinButtonTransition")
+
+    val duration = 600
+    val buttonBackgroundColor: Color by transition.animateColor(
+        transitionSpec = { tween(duration) },
+        label = "Button Background Color"
+    ) { state ->
+        when (state) {
+            JoinButtonState.IDLE -> Color.Blue
+            JoinButtonState.PRESSED -> Color.White
+        }
+    }
 
     val iconAsset: ImageVector =
         if (buttonState == JoinButtonState.PRESSED)
