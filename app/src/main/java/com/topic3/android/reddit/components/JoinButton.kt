@@ -29,6 +29,7 @@ import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.animateDp
 import androidx.compose.ui.unit.Dp
+import androidx.compose.animation.core.animateDp
 
 @Composable
 fun JoinButton(onClick: (Boolean) -> Unit ={} ) {
@@ -39,7 +40,8 @@ fun JoinButton(onClick: (Boolean) -> Unit ={} ) {
 
     val transition = updateTransition(
         targetState = buttonState,
-        label = "JoinButtonTransition")
+        label = "JoinButtonTransition"
+    )
 
     val duration = 600
     val buttonBackgroundColor: Color by transition.animateColor(
@@ -56,7 +58,7 @@ fun JoinButton(onClick: (Boolean) -> Unit ={} ) {
             by transition.animateDp(
                 transitionSpec = { tween(duration) },
                 label = "Button Width"
-            ) {state ->
+            ) { state ->
                 when (state) {
                     JoinButtonState.IDLE -> 70.dp
                     JoinButtonState.PRESSED -> 32.dp
@@ -67,7 +69,7 @@ fun JoinButton(onClick: (Boolean) -> Unit ={} ) {
             by transition.animateDp(
                 transitionSpec = { tween(duration) },
                 label = "Text Max Width"
-            ) {state ->
+            ) { state ->
                 when (state) {
                     JoinButtonState.IDLE -> 40.dp
                     JoinButtonState.PRESSED -> 0.dp
